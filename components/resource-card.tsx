@@ -61,10 +61,10 @@ export function ResourceCard({
         </div>
       </div>
 
-      {/* demo slider */}
+      {/* editable stock level */}
       <div className="mt-5 border-t border-current/10 pt-4">
         <label className="mb-2 flex items-center justify-between text-[11px] font-medium uppercase tracking-wide opacity-70">
-          <span>Live demo control</span>
+          <span>Adjust stock level</span>
           <span className="tabular-nums">{Math.round(value)}%</span>
         </label>
         <input

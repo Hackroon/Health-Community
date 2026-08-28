@@ -1,6 +1,7 @@
-"use client"
+'use client'
 
-import { useState } from "react"
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   Activity,
   LayoutDashboard,
@@ -9,64 +10,103 @@ import {
   Truck,
   Settings,
   HeartPulse,
-} from "lucide-react"
+  Building2,
+  LogOut,
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
-const nav = [
-  { label: "Overview", icon: LayoutDashboard },
-  { label: "Inventory", icon: Boxes },
-  { label: "Network Share", icon: Share2 },
-  { label: "Logistics", icon: Truck },
-  { label: "Vitals", icon: Activity },
-  { label: "Settings", icon: Settings },
+interface NavItem {
+  label: string
+  href: string
+  icon: LucideIcon
+}
+
+const hospitalNav: NavItem[] = [
+  { label: 'Overview', href: '/hospital/overview', icon: LayoutDashboard },
+  { label: 'Inventory', href: '/hospital/inventory', icon: Boxes },
+  { label: 'Network Share', href: '/hospital/network', icon: Share2 },
+  { label: 'Logistics', href: '/hospital/logistics', icon: Truck },
+  { label: 'Vitals', href: '/hospital/vitals', icon: Activity },
+  { label: 'Settings', href: '/hospital/settings', icon: Settings },
 ]
 
-export function Sidebar() {
-  const [active, setActive] = useState("Overview")
+const vendorNav: NavItem[] = [
+  { label: 'Overview', href: '/vendor/overview', icon: LayoutDashboard },
+  { label: 'Logistics', href: '/vendor/logistics', icon: Truck },
+  { label: 'Settings', href: '/vendor/settings', icon: Settings },
+]
+
+interface SidebarProps {
+  role: 'hospital' | 'vendor'
+  orgName: string
+  location?: string | null
+}
+
+export function Sidebar({ role, orgName, location }: SidebarProps) {
+  const pathname = usePathname()
+  const router = useRouter()
+  const nav = role === 'vendor' ? vendorNav : hospitalNav
+  const RoleIcon = role === 'vendor' ? Building2 : HeartPulse
+
+  async function handleSignOut() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/auth/login')
+    router.refresh()
+  }
 
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-slate-200 bg-white/80 px-4 py-6 backdrop-blur lg:flex">
       <div className="mb-8 flex items-center gap-3 px-2">
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white shadow-sm">
-          <HeartPulse className="h-6 w-6" aria-hidden />
+          <RoleIcon className="h-6 w-6" aria-hidden />
         </span>
         <div>
-          <p className="text-sm font-bold leading-tight text-slate-800">
-            PHC MedGrid
+          <p className="text-sm font-bold leading-tight text-slate-800">PHC MedGrid</p>
+          <p className="text-xs text-slate-400">
+            {role === 'vendor' ? 'Vendor Portal' : 'Resource Optimizer'}
           </p>
-          <p className="text-xs text-slate-400">Resource Optimizer</p>
         </div>
       </div>
 
       <nav className="flex flex-1 flex-col gap-1">
-        {nav.map(({ label, icon: Icon }) => {
-          const isActive = active === label
+        {nav.map(({ label, href, icon: Icon }) => {
+          const isActive = pathname === href || pathname.startsWith(`${href}/`)
           return (
-            <button
+            <Link
               key={label}
-              type="button"
-              onClick={() => setActive(label)}
+              href={href}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-teal-50 text-teal-700"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+                  ? 'bg-teal-50 text-teal-700'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
               }`}
             >
               <Icon className="h-5 w-5" aria-hidden />
               {label}
-            </button>
+            </Link>
           )
         })}
       </nav>
 
       <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <p className="text-xs font-semibold text-slate-700">Hospital Alpha</p>
-        <p className="mt-0.5 text-xs text-slate-400">
-          Coverage node · Region 7
+        <p className="truncate text-xs font-semibold text-slate-700">{orgName}</p>
+        <p className="mt-0.5 truncate text-xs text-slate-400">
+          {location || (role === 'vendor' ? 'Supplier network' : 'Coverage node')}
         </p>
         <div className="mt-3 flex items-center gap-2">
           <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
           <span className="text-xs text-slate-500">Live sync active</span>
         </div>
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="mt-3 flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-white hover:text-red-600"
+        >
+          <LogOut className="h-3.5 w-3.5" aria-hidden />
+          Sign out
+        </button>
       </div>
     </aside>
   )

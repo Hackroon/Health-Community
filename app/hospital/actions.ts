@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { findDonorForResource } from '@/lib/data/inventory'
 import { revalidatePath } from 'next/cache'
+import { createFreshId } from '@/lib/id'
 
 export async function updateInventoryQuantity(itemId: string, quantity: number) {
   const supabase = await createClient()
@@ -44,6 +45,7 @@ export async function createInventoryItem(input: {
   if (input.full_capacity <= 0) return { error: 'Full capacity must be greater than 0' }
 
   const { error } = await supabase.from('inventory_items').insert({
+    id: await createFreshId(),
     hospital_id: user.id,
     name: input.name.trim(),
     category: input.category.trim() || 'General',
@@ -95,6 +97,7 @@ export async function requestCrossNetworkTransfer(input: {
   const { data, error } = await supabase
     .from('resource_requests')
     .insert({
+      id: await createFreshId(),
       requesting_hospital_id: user.id,
       donor_hospital_id: donor?.donorHospitalId ?? null,
       inventory_item_id: input.inventoryItemId ?? null,
@@ -182,6 +185,7 @@ export async function createOrder(input: {
   if (!input.packageName.trim()) return { error: 'Package details are required' }
 
   const { error } = await supabase.from('orders').insert({
+    id: await createFreshId(),
     hospital_id: user.id,
     vendor_name: input.vendorName.trim() || 'Unnamed Vendor',
     package_name: input.packageName.trim(),

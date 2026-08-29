@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createFreshId } from '@/lib/id'
 
 export interface InventoryItem {
   id: string
@@ -36,7 +37,11 @@ export async function getInventoryItems(hospitalId: string): Promise<InventoryIt
   // Seed default items for a first-time hospital so the dashboard isn't empty.
   const { data: seeded, error: seedError } = await supabase
     .from('inventory_items')
-    .insert(DEFAULT_ITEMS.map((item) => ({ ...item, hospital_id: hospitalId })))
+    .insert(
+      await Promise.all(
+        DEFAULT_ITEMS.map(async (item) => ({ ...item, id: await createFreshId(), hospital_id: hospitalId })),
+      ),
+    )
     .select('*')
 
   if (seedError) {

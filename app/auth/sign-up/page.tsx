@@ -22,6 +22,7 @@ import {
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { isStrongPassword } from '@/lib/security'
 
 function signUpErrorMessage(error: unknown): string {
   const { code, status } = (error ?? {}) as { code?: string; status?: number }
@@ -65,8 +66,24 @@ export default function Page() {
       setIsLoading(false)
       return
     }
+    if (!isStrongPassword(password)) {
+      setError('Password must be at least 8 characters and include letters, numbers, and a special character.')
+      setIsLoading(false)
+      return
+    }
 
     try {
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('contact_email', email)
+        .maybeSingle()
+      if (existingProfile?.role && existingProfile.role !== role) {
+        setError('This email is already registered with a different organization type.')
+        setIsLoading(false)
+        return
+      }
+
       const { error } = await supabase.auth.signUp({
         email,
         password,

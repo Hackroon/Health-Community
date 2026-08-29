@@ -1,33 +1,22 @@
 # Health-Community
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+## Purpose
+- Hospital and vendor resource coordination dashboard.
 
-## Built with v0
+## Features
+- Role-based hospital and vendor dashboards.
+- Supabase auth with sign up, login, and password reset.
+- Inventory, logistics, network, and settings views.
+- Role-aware routing and session handling.
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+## How to use
+1. Sign up as a hospital or vendor organization.
+2. Confirm the email address.
+3. Log in and use the matching dashboard.
+4. Use Forgot Password to reset access by email.
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_mJ2ccW7T7F0xa6AsfKUgss5qKLrM)
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+## Security
+- Passwords must be 8+ characters with letters, numbers, and a special character.
+- Hospital and vendor accounts stay role-separated by email.
+- Short display IDs are shown in the app for hospital and vendor records.
+- OWASP-style protections are applied through auth, role guards, and input validation.

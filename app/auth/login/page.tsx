@@ -106,6 +106,9 @@ export default function Page() {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Signing in...' : 'Sign in'}
                 </Button>
+                <Button type="button" variant="ghost" className="w-full" asChild>
+                  <Link href="/auth/forgot-password">Forgot password?</Link>
+                </Button>
               </div>
               <div className="mt-4 text-center text-sm text-muted-foreground">
                 Don&apos;t have an account?{' '}

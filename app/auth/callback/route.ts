@@ -14,9 +14,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  if (searchParams.get('type') === 'recovery') {
-    return NextResponse.redirect(`${origin}/auth/reset-password`)
-  }
-
   return NextResponse.redirect(`${origin}/auth/error`)
 }

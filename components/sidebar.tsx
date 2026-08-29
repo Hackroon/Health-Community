@@ -48,7 +48,6 @@ export function Sidebar({ role, orgName, location }: SidebarProps) {
   const router = useRouter()
   const nav = role === 'vendor' ? vendorNav : hospitalNav
   const RoleIcon = role === 'vendor' ? Building2 : HeartPulse
-  const rootHref = role === 'vendor' ? '/vendor/overview' : '/hospital/overview'
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -70,13 +69,6 @@ export function Sidebar({ role, orgName, location }: SidebarProps) {
           </p>
         </div>
       </div>
-
-      <Link href={rootHref} className="mb-3 block px-2">
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Dashboard</p>
-          <p className="text-sm font-semibold text-slate-800">{role === 'vendor' ? 'Vendor Overview' : 'Hospital Overview'}</p>
-        </div>
-      </Link>
 
       <nav className="flex flex-1 flex-col gap-1">
         {nav.map(({ label, href, icon: Icon }) => {
